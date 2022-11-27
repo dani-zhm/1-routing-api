@@ -1,57 +1,58 @@
+// mapbox styling for container
+import "mapbox-gl/dist/mapbox-gl.css";
 import mapboxgl, { Map } from "mapbox-gl";
-import { useRef } from "react";
-import axios from "axios";
+
 import config from "./config";
+import Mapbox from "./components/Mapbox";
+import { useAtom } from "jotai";
+import { lngLatAtom } from "./atoms";
 
-// mapboxgl.setRTLTextPlugin(
-// 'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js',
-// null,
-// true // Lazy load the plugin
-// );
+// plugin to fix how rtl languages are display
+mapboxgl.setRTLTextPlugin(
+  "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js",
+  null,
+  true // Lazy load the plugin
+);
 
+mapboxgl.accessToken = config.MAPBOX_KEY;
+
+const App = () => {
+  const [lngLat] = useAtom(lngLatAtom);
+  return (
+    <>
+      <Mapbox>
+        <div className="bg-slate-300 absolute rounded py-2 px-3 m-2">
+          <p>Longitude: {lngLat[0]}</p>
+          <p>Latitude: {lngLat[1]}</p>
+        </div>
+      </Mapbox>
+    </>
+  );
+};
+
+/* 
+
+AXIOS SNIPPET FOR ROUTING API 
+
+EXAMPLE URL
 const URL =
   "https://map.ir/routes/route/v1/driving/51.442279815673835,35.7428898051826;51.35747909545899,35.73870984488911";
 
-function App() {
-  const mapRef = useRef<Map | null>(null);
-  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+axios
+  .post(URL, null, {
+    headers: { "x-api-key": config.MAPIR_KEY },
+    params: {
+      steps: false,
+      alternatives: false,
+      geometries: "geojson",
+    },
+  })
+  .then((res) => {
+    // on load should only do basic map stuff
+    // can on click should handle
+  });
+}}
 
-  // useEffect(() => {
-  //   if (!mapRef.current && mapContainerRef.current) {
-  //     mapRef.current = new mapboxgl.Map()
-  //   }
-
-  //   return () => {
-  //     if (mapRef.current)
-  //     {
-  //       // mapRef.current.off('load')
-  //     }
-  //   }
-  // })
-
-  return (
-    <div style={{ height: 400 }}>
-      <button
-        onClick={() => {
-          axios.post(URL, null, {
-            headers: { "x-api-key": config.MAPIR_KEY },
-            params: {
-              steps: false,
-              alternatives: false,
-              geometries: "geojson",
-            },
-          }).then(res => {
-            // on load should only do basic map stuff
-
-            // can on click should handle
-            
-          });
-        }}
-      >
-        fetch
-      </button>
-    </div>
-  );
-}
+*/
 
 export default App;
