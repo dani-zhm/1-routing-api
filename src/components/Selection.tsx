@@ -1,6 +1,11 @@
 import { useAtom } from "jotai";
 import { FC } from "react";
-import { Selections, selectionAtom, destLngLatAtom, originLngLatAtom } from "../atoms";
+import {
+  Selections,
+  selectionAtom,
+  destLngLatAtom,
+  originLngLatAtom,
+} from "../atoms";
 import Button from "./ui/Button";
 
 const SelectButton = ({
@@ -16,7 +21,7 @@ const SelectButton = ({
   return (
     <Button
       onClick={() => setSelection(value)}
-      className={isSelected ? "border-black" : ""}
+      className={`${isSelected ? "border-slate-900" : ""}`}
     >
       {title}
     </Button>
@@ -28,7 +33,7 @@ interface ISelection {
 }
 
 const Selection: FC<ISelection> = ({ initialValue }) => {
-  const [selection, setSelection] = useAtom(selectionAtom);
+  const [selection] = useAtom(selectionAtom);
   const isOriginSelected = selection === Selections.ORIGIN || false;
   const [originLngLat] = useAtom(originLngLatAtom);
   const [destLngLat] = useAtom(destLngLatAtom);
@@ -40,8 +45,8 @@ const Selection: FC<ISelection> = ({ initialValue }) => {
         <SelectButton title="Dest" value={Selections.DESTINATION} />
       </div>
 
-      <div className="p-4">
-        <p>Longitude & Latitude for:</p>
+      <div className="py-4">
+        <p className="uppercase">Longitude & Latitude for:</p>
         <ul>
           <li className={isOriginSelected ? "font-bold" : ""}>
             Origin: [{originLngLat.join(", ")}]

@@ -1,4 +1,5 @@
 import { atom } from "jotai";
+import { Map } from "mapbox-gl";
 
 export type LngLat = [number, number];
 
@@ -14,3 +15,5 @@ export const originLngLatAtom = atom<LngLat>([0, 0]);
 export const destLngLatAtom = atom<LngLat>([0, 0]);
 
 export const selectionAtom = atom<Selections>(Selections.ORIGIN);
+
+export const mapAtom = atom<Map | null>(null);

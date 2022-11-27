@@ -1,6 +1,6 @@
 import { useAtom } from "jotai";
-import mapboxgl, { Map } from "mapbox-gl";
-import { useRef, useEffect, FC, PropsWithChildren } from "react";
+import mapboxgl from "mapbox-gl";
+import { FC, PropsWithChildren } from "react";
 import {
   destLngLatAtom,
   LngLat,
@@ -9,10 +9,9 @@ import {
   selectionAtom,
   Selections,
 } from "../atoms";
+import useMap from "../hooks/useMap";
 
 const Mapbox: FC<PropsWithChildren> = ({ children }) => {
-  const mapRef = useRef<Map | null>(null);
-  const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const [, setLngLat] = useAtom(lngLatAtom);
   const [selection] = useAtom(selectionAtom);
   const [, setOriginLngLat] = useAtom(originLngLatAtom);
@@ -28,27 +27,32 @@ const Mapbox: FC<PropsWithChildren> = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    // handle clicking on map if map exists
-    if (mapRef.current) mapRef.current!.on("click", handleMapClick);
+  const handleMapLoad = (
+    ev: mapboxgl.MapboxEvent<undefined> & mapboxgl.EventData
+  ) => {
+    ev.target.addSource("some-route", {
+      type: "geojson",
+      data: {
+        type: "Feature",
+        properties: {},
+        geometry: {
+          type: "LineString",
+          coordinates: [],
+        },
+      },
+    });
 
-    // if no map and container ref not null then instantiate map
-    if (!mapRef.current && mapContainerRef.current) {
-      mapRef.current = new mapboxgl.Map({
-        container: mapContainerRef.current,
-        style: "mapbox://styles/mapbox/streets-v12",
-        // caution: it's [Longitude, Latitude] here!
-        // *google maps does [Latitude, Longitude] ?!
-        center: [51.366624055720855, 35.7004387316396],
-        zoom: 8,
-      });
-    }
+    ev.target.addLayer({
+      id: "some-route-layer",
+      type: "line",
+      source: "some-route",
+      paint: { "line-width": 3, "line-color": "black" },
+    });
+  };
 
-    // cleanup
-    return () => {
-      // remove old callback since it could have stale state in its definition
-      mapRef.current!.off("click", handleMapClick);
-    };
+  const { mapContainerRef } = useMap({
+    onMapClick: handleMapClick,
+    onMapLoad: handleMapLoad,
   });
 
   return (
