@@ -21,18 +21,14 @@ const SelectButton = ({
   return (
     <Button
       onClick={() => setSelection(value)}
-      className={`${isSelected ? "border-slate-900" : ""}`}
+      className={`${isSelected ? "border-slate-700 underline" : ""}`}
     >
       {title}
     </Button>
   );
 };
 
-interface ISelection {
-  initialValue: number;
-}
-
-const Selection: FC<ISelection> = ({ initialValue }) => {
+const Selection = () => {
   const [selection] = useAtom(selectionAtom);
   const isOriginSelected = selection === Selections.ORIGIN || false;
   const [originLngLat] = useAtom(originLngLatAtom);

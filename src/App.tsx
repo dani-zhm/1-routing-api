@@ -17,6 +17,7 @@ import Selection from "./components/Selection";
 import Button from "./components/ui/Button";
 import axios from "axios";
 import genRouteApiUrl from "./utils/genRouteApiUrl";
+import FindRouteButton from "./components/FindRouteButton";
 
 // plugin to fix how rtl languages are display
 mapboxgl.setRTLTextPlugin(
@@ -29,38 +30,12 @@ mapboxgl.accessToken = config.MAPBOX_KEY;
 
 const App = () => {
   const [lngLat] = useAtom(lngLatAtom);
-  const [originLngLat] = useAtom(originLngLatAtom);
-  const [destLngLat] = useAtom(destLngLatAtom);
-  const [map] = useAtom(mapAtom);
 
-  const findRoute = async () => {
-    const apiUrl = genRouteApiUrl({ originLngLat, destLngLat });
-
-    const res = await axios.post(apiUrl, null, {
-      headers: { "x-api-key": config.MAPIR_KEY },
-      params: {
-        steps: false,
-        alternatives: false,
-        geometries: "geojson",
-      },
-    });
-
-    const newLine = res.data.routes[0].geometry.coordinates;
-
-    (map?.getSource("some-route") as any).setData({
-      type: "Feature",
-      properties: {},
-      geometry: {
-        type: "LineString",
-        coordinates: newLine,
-      },
-    });
-  };
 
   return (
-    <>
+    <div className="max-w-3xl mx-auto p-4 bg-indigo-200 h-full">
       <Mapbox>
-        <div className="bg-slate-300 absolute rounded py-2 px-3 m-2">
+        <div className="bg-gray-900/50 text-white absolute rounded py-2 px-3 m-2">
           <p>Longitude: {lngLat[0]}</p>
           <p>Latitude: {lngLat[1]}</p>
         </div>
@@ -68,12 +43,10 @@ const App = () => {
 
       <div className="p-4">
         <p className="uppercase my-3">Which one to set?</p>
-        <Selection initialValue={Selections.ORIGIN} />
-        <Button className="bg-green-600" onClick={findRoute}>
-          Find route
-        </Button>
+        <Selection />
+        <FindRouteButton />
       </div>
-    </>
+    </div>
   );
 };
 
