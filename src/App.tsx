@@ -1,11 +1,18 @@
 // mapbox styling for container
 import "mapbox-gl/dist/mapbox-gl.css";
-import mapboxgl, { Map } from "mapbox-gl";
+import mapboxgl from "mapbox-gl";
 
 import config from "./config";
 import Mapbox from "./components/Mapbox";
 import { useAtom } from "jotai";
-import { lngLatAtom } from "./atoms";
+import {
+  destLngLatAtom,
+  lngLatAtom,
+  originLngLatAtom,
+  Selections,
+} from "./atoms";
+
+import Selection from "./components/Selection";
 
 // plugin to fix how rtl languages are display
 mapboxgl.setRTLTextPlugin(
@@ -18,6 +25,7 @@ mapboxgl.accessToken = config.MAPBOX_KEY;
 
 const App = () => {
   const [lngLat] = useAtom(lngLatAtom);
+
   return (
     <>
       <Mapbox>
@@ -26,13 +34,18 @@ const App = () => {
           <p>Latitude: {lngLat[1]}</p>
         </div>
       </Mapbox>
+
+      <div className="p-4">
+        <p>Which one to set?</p>
+        <Selection initialValue={Selections.ORIGIN} />
+      </div>
     </>
   );
 };
 
 /* 
 
-AXIOS SNIPPET FOR ROUTING API 
+AXIOS SNIPPET TO USE LATER FOR ROUTING API 
 
 EXAMPLE URL
 const URL =
