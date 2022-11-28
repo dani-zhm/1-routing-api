@@ -1,5 +1,4 @@
 import { useAtom } from "jotai";
-import { FC } from "react";
 import {
   Selections,
   selectionAtom,

@@ -1,7 +1,12 @@
 import axios from "axios";
 import { useAtom } from "jotai";
-import { useState } from "react";
-import { originLngLatAtom, destLngLatAtom, mapAtom } from "../atoms";
+import { useEffect, useState } from "react";
+import {
+  originLngLatAtom,
+  destLngLatAtom,
+  mapAtom,
+  mapLoadedAtom,
+} from "../atoms";
 import config from "../config";
 import genRouteApiUrl from "../utils/genRouteApiUrl";
 import Button from "./ui/Button";
@@ -10,9 +15,16 @@ const FindRouteButton = () => {
   const [originLngLat] = useAtom(originLngLatAtom);
   const [destLngLat] = useAtom(destLngLatAtom);
   const [map] = useAtom(mapAtom);
-  const [loading, setLoading] = useState(false);
+  const [mapLoaded] = useAtom(mapLoadedAtom);
+  const [loading, setLoading] = useState(!mapLoaded);
+
+  // enable find route button only if map is loaded
+  useEffect(() => {
+    setLoading(!mapLoaded);
+  }, [mapLoaded]);
 
   const findRoute = async () => {
+    setLoading(true);
     const apiUrl = genRouteApiUrl({ originLngLat, destLngLat });
 
     const res = await axios.post(apiUrl, null, {
@@ -26,7 +38,9 @@ const FindRouteButton = () => {
 
     const newLine = res.data.routes[0].geometry.coordinates;
 
-    (map?.getSource("some-route") as any)?.setData({
+    const source = map?.getSource("some-route") as any;
+
+    source?.setData({
       type: "Feature",
       properties: {},
       geometry: {
@@ -34,6 +48,8 @@ const FindRouteButton = () => {
         coordinates: newLine,
       },
     });
+
+    setLoading(false);
   };
 
   return (

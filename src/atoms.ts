@@ -17,3 +17,6 @@ export const destLngLatAtom = atom<LngLat>([0, 0]);
 export const selectionAtom = atom<Selections>(Selections.ORIGIN);
 
 export const mapAtom = atom<Map | null>(null);
+
+export const mapLoadedAtom = atom(false);
+

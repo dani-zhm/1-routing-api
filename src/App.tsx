@@ -6,23 +6,19 @@ import config from "./config";
 import Mapbox from "./components/Mapbox";
 import { useAtom } from "jotai";
 import {
-  destLngLatAtom,
   lngLatAtom,
-  mapAtom,
-  originLngLatAtom,
-  Selections,
 } from "./atoms";
 
 import Selection from "./components/Selection";
-import Button from "./components/ui/Button";
-import axios from "axios";
-import genRouteApiUrl from "./utils/genRouteApiUrl";
 import FindRouteButton from "./components/FindRouteButton";
 
 // plugin to fix how rtl languages are display
 mapboxgl.setRTLTextPlugin(
   "https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-rtl-text/v0.2.3/mapbox-gl-rtl-text.js",
-  null,
+  // error handler
+  () => {
+    return;
+  },
   true // Lazy load the plugin
 );
 
@@ -30,7 +26,6 @@ mapboxgl.accessToken = config.MAPBOX_KEY;
 
 const App = () => {
   const [lngLat] = useAtom(lngLatAtom);
-
 
   return (
     <div className="max-w-3xl mx-auto p-4 bg-indigo-200 h-full">
